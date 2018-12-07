@@ -1,9 +1,6 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 /**
@@ -190,8 +187,16 @@ public class Grid implements Iterable<Cell> {
      * @param random {@link Random} instance used to decide if each {@link Cell} is ALIVE or DEAD.
      * @throws NullPointerException if {@code random} is {@code null}.
      */
-    // TODO: Écrire une version correcte de cette méthode.
     void randomGeneration(Random random) {
-
+        for(int i=0;i<getNumberOfRows();i++)
+        {
+            for(int j=0;j<getNumberOfColumns();j++)
+            {
+                if(CellState.DEAD.isAlive == random.nextBoolean())
+                    this.getCell(i, j).setState(CellState.DEAD);
+                else
+                    this.getCell(i, j).setState(CellState.ALIVE);
+            }
+        }
     }
 }
