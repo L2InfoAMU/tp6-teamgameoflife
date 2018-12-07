@@ -112,9 +112,20 @@ public class Grid implements Iterable<Cell> {
         return count;
     }
 
-    // TODO: Écrire une version correcte de cette méthode.
     private CellState calculateNextState(int rowIndex, int columnIndex) {
-        return null;
+        int count = this.countAliveNeighbours(rowIndex, columnIndex);
+        if(this.getCell(rowIndex, columnIndex).getState()==CellState.DEAD)
+        {
+            if(count==3)
+                return CellState.ALIVE;
+            else
+                return CellState.DEAD;
+        }
+        else
+            if(count>=2 && count <= 3)
+                return CellState.ALIVE;
+            else
+                return CellState.DEAD;
     }
 
 
