@@ -89,12 +89,12 @@ public class Grid implements Iterable<Cell> {
 
     private List<Cell> getNeighbours(int rowIndex, int columnIndex) {
         List<Cell> neighbours = new ArrayList<>();
-        for(int i = -1 ; i<2 ; i++)
+        for(int i = rowIndex-1 ; i<=rowIndex+1 ; i++)
         {
-            for(int j = -1; j<2 ; j++)
+            for(int j = columnIndex-1; j<=columnIndex+1 ; j++)
             {
-                if(i != 0 && j !=0)
-                    neighbours.add(this.getCell(rowIndex+i,columnIndex+j));
+                if(i != rowIndex && j !=columnIndex)
+                    neighbours.add(this.getCell(i, j));
             }
         }
         return neighbours;
@@ -104,23 +104,42 @@ public class Grid implements Iterable<Cell> {
         int count = 0;
         List<Cell> listCell = this.getNeighbours(rowIndex, columnIndex);
         for(Cell cell : listCell)
-            if(cell.isAlive())
+            if(cell.getState()==CellState.RED || cell.getState() == CellState.BLUE)
                 count++;
         return count;
+    }
+
+    private CellState determinateAliveNeighbours(int rowIndex, int columnIndex){
+        int countR = 0;
+        int countB = 0;
+        int count = 0;
+        List<Cell> listCell = this.getNeighbours(rowIndex, columnIndex);
+        for(Cell cell : listCell)
+        {
+            count ++;
+            if(cell.getState() == CellState.BLUE)
+                countB = countB+1;
+            else if(cell.getState() == CellState.RED)
+                countR = countR+1;
+        }
+
+        if(countB>=countR && count==3)
+            return CellState.BLUE;
+        else if(countR>=countB && count==3)
+            return CellState.RED;
+        else
+            return CellState.DEAD;
     }
 
     private CellState calculateNextState(int rowIndex, int columnIndex) {
         int count = this.countAliveNeighbours(rowIndex, columnIndex);
         if(this.getCell(rowIndex, columnIndex).getState()==CellState.DEAD)
         {
-            if(count==3)
-                return CellState.ALIVE;
-            else
-                return CellState.DEAD;
+            return determinateAliveNeighbours(rowIndex, columnIndex);
         }
         else
             if(count>=2 && count <= 3)
-                return CellState.ALIVE;
+                return this.getCell(rowIndex, columnIndex).getState();
             else
                 return CellState.DEAD;
     }
@@ -143,7 +162,7 @@ public class Grid implements Iterable<Cell> {
         {
             for(int j = 0 ; j<getNumberOfColumns();j++)
             {
-                this.getCell(i, j).setState(nextState[i][j]);
+                this.cells[i][j].setState(nextState[i][j]);
             }
         }
     }
@@ -194,8 +213,12 @@ public class Grid implements Iterable<Cell> {
             {
                 if(CellState.DEAD.isAlive == random.nextBoolean())
                     this.getCell(i, j).setState(CellState.DEAD);
-                else
-                    this.getCell(i, j).setState(CellState.ALIVE);
+                else {
+                    if (CellState.BLUE.isAlive == random.nextBoolean())
+                        this.getCell(i, j).setState(CellState.BLUE);
+                    else
+                        this.getCell(i, j).setState(CellState.RED);
+                }
             }
         }
     }
